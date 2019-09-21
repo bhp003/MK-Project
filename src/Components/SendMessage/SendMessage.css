@@ -1,0 +1,15 @@
+.SendMessage-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  width: 400px;
+}
+
+.SendMessage-errorMessage {
+  color: red;
+}
+
+.SendMessage-button {
+  border-radius: 20px;
+}
