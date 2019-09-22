@@ -6,7 +6,7 @@ const ERR = 500;
 
 module.exports = class SES {
   sendEmail(sender, receiver, content) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const params = {
         Destination: {
           ToAddresses: [receiver]
@@ -22,9 +22,9 @@ module.exports = class SES {
   
       ses.sendEmail(params, (err, data) => {
         if (err) {
-          reject({
+          resolve({
             statusCode: ERR,
-            body: 'Email failed to send'
+            body: 'Email failed to send!'
           });
         }
         else {
