@@ -1,5 +1,5 @@
 import React from 'react';
-import {TextField, Button, SnackbarContent} from '@material-ui/core';
+import {TextField, Button} from '@material-ui/core';
 import './SendMessage.css';
 
 const STATUS_CODES = {
@@ -21,7 +21,11 @@ class SendMessage extends React.Component {
       name: '',
       email: '',
       message: '',
-      notification: ''
+      notification: {
+        message: '',
+        color: '',
+        isVisible: false
+      }
     },
     errorMessages: {
       name: '',
@@ -100,14 +104,21 @@ class SendMessage extends React.Component {
     xhrSendEmail.onreadystatechange = () => {
       if (xhrSendEmail.readyState === XMLHttpRequest.DONE) {
         const {user} = this.state;
-        if (xhrSendEmail.response.statusCode === STATUS_CODES.OK) {
-          user.notification = "Message sent successfully!"
-          this.setState({user});
+        const response = JSON.parse(xhrSendEmail.response);
+        if (response.statusCode === STATUS_CODES.OK) {
+          user.notification.message = response.body;
+          user.notification.color = "#64dd17";
         }
         else {
-          user.notification = "Unable to send message";
-          this.setState({user});
+          user.notification.message = response.body;
+          user.notification.color = "#e53935";
         }
+        user.notification.isVisible = true;
+        this.setState({user});
+        setTimeout(() => {
+          user.notification.isVisible = false;
+          this.setState({user});
+        }, 3000);
       }
     }
 
@@ -170,10 +181,12 @@ class SendMessage extends React.Component {
             Submit
           </Button>
         </form>
-        <SnackbarContent
-          className="SendMessage-snackbar"
-          message={user.notification}
-        />
+        { this.state.user.notification.isVisible ? <div 
+          className="SendMessage-popup" 
+          style={{"background" : this.state.user.notification.color}}>
+            <p>{this.state.user.notification.message}</p>
+        </div> 
+        : null }
       </div>
     );
   }
