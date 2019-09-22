@@ -1,5 +1,6 @@
 import React from 'react';
-import {TextField, Button, SnackbarContent} from '@material-ui/core';
+import {TextField, Button, SnackbarContent, IconButton} from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import './SendMessage.css';
 
 const STATUS_CODES = {
@@ -21,7 +22,12 @@ class SendMessage extends React.Component {
       name: '',
       email: '',
       message: '',
-      notification: ''
+      notification: {
+        message: '',
+        color: '',
+        variant: '',
+        isVisible: false
+      }
     },
     errorMessages: {
       name: '',
@@ -86,6 +92,13 @@ class SendMessage extends React.Component {
     this.sendSendEmailRequest(data);
   }
 
+  snackBarOnClose = (event) => {
+    event.preventDefault();
+    const {user} = this.state;
+    user.notification.isVisible = false;
+    this.setState({user});
+  }
+
   sendSaveMessageRequest = (data) => {
     const xhrSaveMessage = new XMLHttpRequest();
     const SAVE_MESSAGE_API_KEY = process.env.REACT_APP_APIGATEWAY_SAVE_MESSAGE_KEY;
@@ -101,7 +114,7 @@ class SendMessage extends React.Component {
       if (xhrSendEmail.readyState === XMLHttpRequest.DONE) {
         const {user} = this.state;
         if (xhrSendEmail.response.statusCode === STATUS_CODES.OK) {
-          user.notification = "Message sent successfully!"
+          user.notification.message = "Message sent successfully!"
           this.setState({user});
         }
         else {
@@ -170,10 +183,20 @@ class SendMessage extends React.Component {
             Submit
           </Button>
         </form>
-        <SnackbarContent
+        {/* <SnackbarContent
           className="SendMessage-snackbar"
-          message={user.notification}
-        />
+          variant={user.notification.variant}
+          color={user.notification.color}
+          message="{user.notification.message}"
+          action={[
+            <IconButton key="close" aria-label="close" color="inherit" onClick={this.snackBarOnClose}>
+              <CloseIcon className="SendMessage-close-icon" />
+            </IconButton>,
+          ]}
+        /> */}
+        <div className="SendMessage-popup">
+          <p>Some text</p>
+        </div>
       </div>
     );
   }
