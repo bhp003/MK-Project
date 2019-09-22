@@ -1,30 +1,41 @@
 const AWS = require('aws-sdk');
-let AWSConfig = {
-  "region": 'us-west-1',
+const AWSConfig = {
+  "region": 'us-west-2',
   "endpoint": process.env.endpoint,
   "accessKeyId": process.env.accessKey, "secretAccessKey": process.env.secretKey
 };
 AWS.config.update(AWSConfig);
 let documentClient = new AWS.DynamoDB.DocumentClient();
 
+const OK = 200;
+const ERR = 500;
+
 module.exports = class DB {
   write(id, data, table) {
-    let params = {
-      TableName: table,
-      Item: {
-        'ID': id, 
-        'Name': data.name,
-        'Email': data.email,
-        'Message': data.message
+    return new Promise((resolve, reject) => {
+      let params = {
+        TableName: table,
+        Item: {
+          'ID': id, 
+          'Name': data.name,
+          'Email': data.email,
+          'Message': data.message
+        }
       }
-    }
-    return documentClient.put(params, (err, data) => {
-      if (err) {
-        console.log(err);
-      }
-      else {
-        console.log(data);
-      }
-    }).promise();
+      documentClient.put(params, (err, data) => {
+        if (err) {
+          reject({
+            statusCode: ERR,
+            body: 'Could not save message'
+          });
+        }
+        else {
+          resolve({
+            statusCode: OK,
+            body: 'Save message successful'
+          });
+        }
+      });
+    });
   }
 }

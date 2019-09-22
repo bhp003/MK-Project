@@ -13,3 +13,8 @@
 .SendMessage-button {
   border-radius: 20px;
 }
+
+.SendMessage-snackbar {
+  width: 100px;
+  align-items: center;
+}
