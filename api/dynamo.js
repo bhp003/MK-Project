@@ -12,7 +12,7 @@ const ERR = 500;
 
 module.exports = class DB {
   write(id, data, table) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let params = {
         TableName: table,
         Item: {
@@ -24,7 +24,7 @@ module.exports = class DB {
       }
       documentClient.put(params, (err, data) => {
         if (err) {
-          reject({
+          resolve({
             statusCode: ERR,
             body: 'Could not save message'
           });
