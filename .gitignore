@@ -4,9 +4,14 @@
 /node_modules
 /.pnp
 .pnp.js
+/api/node_modules
+/api/package-lock.json
 
 # testing
 /coverage
+
+# api keys
+.env
 
 # production
 /build
