@@ -12,7 +12,7 @@ module.exports = class SES {
           ToAddresses: [receiver]
         },
         Message: {
-          Subject: { Data: "Hello From " + sender},
+          Subject: { Data: sender},
           Body: {
             Text: { Data: content }
           }
