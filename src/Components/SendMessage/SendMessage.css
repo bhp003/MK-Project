@@ -13,3 +13,13 @@
 .SendMessage-button {
   border-radius: 20px;
 }
+
+.SendMessage-popup {
+  width: 200px;
+  text-align: center;
+  margin: 10px auto 0 auto;
+  padding: 10px 10px 10px 10px;
+  color: white;
+  font-size: 16px;
+  border-radius: 10px;
+}
