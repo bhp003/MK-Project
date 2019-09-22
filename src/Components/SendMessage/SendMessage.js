@@ -1,6 +1,5 @@
 import React from 'react';
-import {TextField, Button, SnackbarContent, IconButton} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import {TextField, Button} from '@material-ui/core';
 import './SendMessage.css';
 
 const STATUS_CODES = {
@@ -25,7 +24,6 @@ class SendMessage extends React.Component {
       notification: {
         message: '',
         color: '',
-        variant: '',
         isVisible: false
       }
     },
@@ -92,13 +90,6 @@ class SendMessage extends React.Component {
     this.sendSendEmailRequest(data);
   }
 
-  snackBarOnClose = (event) => {
-    event.preventDefault();
-    const {user} = this.state;
-    user.notification.isVisible = false;
-    this.setState({user});
-  }
-
   sendSaveMessageRequest = (data) => {
     const xhrSaveMessage = new XMLHttpRequest();
     const SAVE_MESSAGE_API_KEY = process.env.REACT_APP_APIGATEWAY_SAVE_MESSAGE_KEY;
@@ -113,14 +104,21 @@ class SendMessage extends React.Component {
     xhrSendEmail.onreadystatechange = () => {
       if (xhrSendEmail.readyState === XMLHttpRequest.DONE) {
         const {user} = this.state;
-        if (xhrSendEmail.response.statusCode === STATUS_CODES.OK) {
-          user.notification.message = "Message sent successfully!"
-          this.setState({user});
+        const response = JSON.parse(xhrSendEmail.response);
+        if (response.statusCode === STATUS_CODES.OK) {
+          user.notification.message = response.body;
+          user.notification.color = "#64dd17";
         }
         else {
-          user.notification = "Unable to send message";
-          this.setState({user});
+          user.notification.message = response.body;
+          user.notification.color = "#e53935";
         }
+        user.notification.isVisible = true;
+        this.setState({user});
+        setTimeout(() => {
+          user.notification.isVisible = false;
+          this.setState({user});
+        }, 3000);
       }
     }
 
@@ -183,20 +181,12 @@ class SendMessage extends React.Component {
             Submit
           </Button>
         </form>
-        {/* <SnackbarContent
-          className="SendMessage-snackbar"
-          variant={user.notification.variant}
-          color={user.notification.color}
-          message="{user.notification.message}"
-          action={[
-            <IconButton key="close" aria-label="close" color="inherit" onClick={this.snackBarOnClose}>
-              <CloseIcon className="SendMessage-close-icon" />
-            </IconButton>,
-          ]}
-        /> */}
-        <div className="SendMessage-popup">
-          <p>Some text</p>
-        </div>
+        { this.state.user.notification.isVisible ? <div 
+          className="SendMessage-popup" 
+          style={{"background" : this.state.user.notification.color}}>
+            <p>{this.state.user.notification.message}</p>
+        </div> 
+        : null }
       </div>
     );
   }
